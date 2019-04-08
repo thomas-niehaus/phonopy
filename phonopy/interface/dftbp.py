@@ -35,7 +35,7 @@
 import sys
 import numpy as np
 
-from phonopy.structure.atoms import Atoms
+from phonopy.structure.atoms import PhonopyAtoms as Atoms 
 from phonopy.units import dftbpToBohr
 from phonopy.file_IO import collect_forces
 from phonopy.interface.vasp import (get_scaled_positions_lines, check_forces,
@@ -202,7 +202,7 @@ def write_dftbp(filename, atoms):
     outfile = open(filename, 'w')
     outfile.write(lines)
 
-def write_supercells_with_displacements(supercell, cells_with_disps, filename="geo.gen"):
+def write_supercells_with_displacements(supercell, cells_with_disps, pre_filename="geo.gen"):
     """Writes perfect supercell and supercells with displacements
 
     Args:
@@ -212,8 +212,9 @@ def write_supercells_with_displacements(supercell, cells_with_disps, filename="g
     """
 
     # original cell
-    write_dftbp(filename + "S", supercell)
+    write_dftbp(pre_filename + "S", supercell)
 
     # displaced cells
-    for ii in range(len(cells_with_disps)):
-        write_dftbp(filename + "S-{:03d}".format(ii+1), cells_with_disps[ii])
+    for ii, cell in enumerate(cells_with_disps):
+        if cell is not None:
+            write_dftbp(pre_filename + "S-{:03d}".format(ii+1), cells_with_disps[ii])
